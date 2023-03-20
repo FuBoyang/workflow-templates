@@ -3,16 +3,24 @@ name: Reusable CD Workflow
 on:
   workflow_call:
     inputs:
-       environment:
+      environment:
         description: 'On which environment do you want to run the workflow?'
         required: true
-        type: string     
+        type: string  
+      runnerName:
+        description: 'Self-hosted runner name?'
+        required: true
+        type: string  
+      input1:
+        description: 'Output value from previous job?'
+        required: false
+        type: string  
 
 jobs:
   release:
-    runs-on: windows-latest
+    runs-on: ${{ inputs.runnerName }}
     environment: ${{ inputs.environment }}
   
     steps:
       - name: Prepare release
-        run: echo "${{ inputs.environment }
+        run: echo "${{ inputs.environment } and ${{ inputs.runnerName }}"
