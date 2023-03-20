@@ -1,0 +1,18 @@
+name: Reusable CD Workflow
+
+on:
+  workflow_call:
+    inputs:
+       environment:
+        description: 'On which environment do you want to run the workflow?'
+        required: true
+        type: string     
+
+jobs:
+  release:
+    runs-on: windows-latest
+    environment: ${{ inputs.environment }}
+  
+    steps:
+      - name: Prepare release
+        run: echo "${{ inputs.environment }
