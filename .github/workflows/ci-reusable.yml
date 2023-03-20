@@ -3,16 +3,16 @@ name: Reusable CI Workflow
 on:
   workflow_call:
     outputs:
-      fullSemVersion: 
-        description: 'The calculated full semantic version of the build'
-        value: ${{ jobs.build.outputs.fullSemVerOutput }}
+      buildoutput: 
+        description: 'Output from build job'
+        value: ${{ jobs.build.outputs.testOutput }}
       
 
 jobs:
   build:
     runs-on: windows-latest
     outputs:
-      fullSemVerOutput: ${{ steps.mapgitversion.outputs.fullSemVersion }}
+      testOutput: ${{ steps.mapoutput.outputs.buildoutput }}
     
     steps:
       - name: Checkout
@@ -24,24 +24,10 @@ jobs:
         with:
           global-json-file: global.json
         
-      # Install gitversion tool
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0
-        with:
-          versionSpec: '5.x'
-          
-      # Determine gitversion
-      - name: Determine GitVersion
-        id: gitversion
-        uses: gittools/actions/gitversion/execute@v0
-        with:
-          useConfigFile: true
-          configFilePath: GitVersion.yml
-        
       # Map gitversion to an output, note: for running in powershell, use $env:GITHUB_OUTPUT, in bash use $GITHUB_OUTPUT
-      - name: Map GitVersion
-        id: mapgitversion
-        run: echo "fullSemVersion=${{ steps.gitversion.outputs.fullSemVer }}" >> $env:GITHUB_OUTPUT
+      - name: Map output value
+        id: mapoutput
+        run: echo "buildoutput=build_output" >> $env:GITHUB_OUTPUT
       
       # Archive
       - name: Archive
