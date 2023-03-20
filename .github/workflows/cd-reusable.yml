@@ -6,21 +6,32 @@ on:
       environment:
         description: 'On which environment do you want to run the workflow?'
         required: true
-        type: string  
-      runnerName:
-        description: 'Self-hosted runner name?'
-        required: true
-        type: string  
+        type: string
       input1:
         description: 'Output value from previous job?'
         required: false
         type: string  
 
 jobs:
-  release:
-    runs-on: ${{ inputs.runnerName }}
+  pre-release:
+    runs-on: windows-latest
     environment: ${{ inputs.environment }}
-  
+    outputs:
+      runnerName: ${{ steps.maprunnername.outputs.runnerName }}
+    
     steps:
-      - name: Prepare release
-        run: echo "${{ inputs.environment }} and ${{ inputs.runnerName }}"
+      - name: Map runner name
+        id: maprunnername
+        run: echo "runnerName=${{ vars.RUNNER_NAME }}" > $env:GITHUB_OUTPUT
+
+
+  release:
+    needs: pre-release
+    environment: ${{ inputs.environment }}
+    runs-on: ${{ needs.pre-release.outputs.runnerName }}
+    
+    steps:
+      - name: Print
+        run: echo "${{ needs.pre-release.outputs.runnerName }}"
+      
+      
