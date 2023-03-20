@@ -23,4 +23,4 @@ jobs:
   
     steps:
       - name: Prepare release
-        run: echo "${{ inputs.environment } and ${{ inputs.runnerName }}"
+        run: echo "${{ inputs.environment }} and ${{ inputs.runnerName }}"
